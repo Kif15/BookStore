@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
 interface Book {
@@ -16,11 +16,8 @@ function App() {
 
   const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  useEffect(() => {
-    fetchBooks();
-  }, []);
 
-  const fetchBooks = async () => {
+  const fetchBooks = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE}/api/books`);
       if (response.ok) {
@@ -34,7 +31,13 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+
+  }, []);
+
+    useEffect(() => {
+    fetchBooks();
+  }, [fetchBooks]);
+
 
   const addToCart = (book: Book) => {
     setCart([...cart, book]);
