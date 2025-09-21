@@ -20,9 +20,9 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Add Entity Framework
+// Use In-Memory Database for testing
 builder.Services.AddDbContext<BookContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseInMemoryDatabase("BookStoreDB"));
 
 var app = builder.Build();
 
@@ -42,7 +42,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BookContext>();
     context.Database.EnsureCreated();
-    
+
     if (!context.Books.Any())
     {
         context.Books.AddRange(
