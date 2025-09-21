@@ -15,7 +15,9 @@ variables:
 # =====================
 build-backend:
   stage: build
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  tags:
+    - hva
   script:
     - cd backend
     - dotnet restore
@@ -27,6 +29,8 @@ build-backend:
 build-frontend:
   stage: build
   image: node:18-alpine
+  tags:
+    - hva
   script:
     - cd frontend
     - npm ci
@@ -40,7 +44,9 @@ build-frontend:
 # =====================
 test-backend:
   stage: test
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  tags:
+    - hva
   script:
     - cd backend
     - dotnet test --logger trx --collect:"XPlat Code Coverage"
@@ -57,6 +63,8 @@ test-backend:
 test-frontend:
   stage: test
   image: node:18-alpine
+  tags:
+    - hva
   script:
     - cd frontend
     - npm ci
@@ -76,7 +84,9 @@ test-frontend:
 # =====================
 sonarqube-backend:
   stage: code-analysis
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  tags:
+    - hva
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
     GIT_DEPTH: "0"
@@ -98,6 +108,8 @@ sonarqube-backend:
 # sonarqube-frontend:
 #   stage: code-analysis
 #   image: sonarsource/sonar-scanner-cli:latest
+#   tags:
+#     - hva
 #   variables:
 #     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
 #     GIT_DEPTH: "0"
@@ -118,6 +130,8 @@ sonarqube-backend:
 deploy-development:
   stage: deploy-dev
   image: docker:20.10.16
+  tags:
+    - hva
   services:
     - docker:20.10.16-dind
   environment:
@@ -141,6 +155,8 @@ deploy-development:
 deploy-test:
   stage: deploy-test
   image: docker:20.10.16
+  tags:
+    - hva
   services:
     - docker:20.10.16-dind
   environment:
@@ -164,6 +180,8 @@ deploy-test:
 deploy-production:
   stage: deploy-prod
   image: docker:20.10.16
+  tags:
+    - hva
   services:
     - docker:20.10.16-dind
   environment:
@@ -190,6 +208,8 @@ deploy-production:
 notify-results:
   stage: .post
   image: alpine:latest
+  tags:
+    - hva
   before_script:
     - apk add --no-cache curl
   script:
