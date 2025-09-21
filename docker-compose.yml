@@ -29,25 +29,27 @@ services:
       - bookstore-api
     networks:
       - bookstore-network
+    volumes:
+      - ./frontend:/app/source  # optional for live reload
 
   # SonarQube for static code analysis
-  sonarqube:
-    image: sonarqube:community
-    environment:
-      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
-    ports:
-      - "9000:9000"
-    networks:
-      - bookstore-network
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_logs:/opt/sonarqube/logs
-      - sonarqube_extensions:/opt/sonarqube/extensions
+  # sonarqube:
+  #   image: sonarqube:community
+  #   environment:
+  #     - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+  #   ports:
+  #     - "9000:9000"
+  #   networks:
+  #     - bookstore-network
+  #   volumes:
+  #     - sonarqube_data:/opt/sonarqube/data
+  #     - sonarqube_logs:/opt/sonarqube/logs
+  #     - sonarqube_extensions:/opt/sonarqube/extensions
 
-volumes:
-  sonarqube_data:
-  sonarqube_logs:
-  sonarqube_extensions:
+# volumes:
+#   sonarqube_data:
+#   sonarqube_logs:
+#   sonarqube_extensions:
 
 networks:
   bookstore-network:
