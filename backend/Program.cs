@@ -7,20 +7,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add CORS
+// Add CORS with specific frontend origin
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("AllowFrontend",
         builder =>
         {
             builder
-                .AllowAnyOrigin()
+                .WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         });
 });
 
-// Use In-Memory Database for testing
+// Add Entity Framework with IN-MEMORY database
 builder.Services.AddDbContext<BookContext>(options =>
     options.UseInMemoryDatabase("BookStoreDB"));
 
@@ -33,16 +33,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
+// Use CORS (must be before UseAuthorization)
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();
+
+// Add health check endpoint
+app.MapGet("/health", () => "Healthy");
 
 // Seed data
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BookContext>();
-    context.Database.EnsureCreated();
-
+    
     if (!context.Books.Any())
     {
         context.Books.AddRange(
@@ -57,7 +60,7 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-// Models
+// Models (keep your existing Book and BookContext classes)
 public class Book
 {
     public int Id { get; set; }
