@@ -1,6 +1,6 @@
 stages:
   - build
-  # - test
+  - test
   # - code-analysis
   # - deploy-dev
   # - deploy-test
@@ -10,16 +10,11 @@ default:
   tags:
     - hva
 
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: "/certs"
-  
 
 
-# # =====================
-# # Build Stage
-# # =====================
-
+# =====================
+# Build Stage
+# =====================
 build-frontend:
     stage: build
     image: node:20
@@ -54,27 +49,35 @@ build-backend:
       - backend/publish
     expire_in: 1 hour
 
-# build-backend:
-#   stage: build
-#   image: mcr.microsoft.com/dotnet/sdk:9.0
-#   tags:
-#     - hva
-#   script:
-#     - cd backend
-#     - dotnet restore
-#     - dotnet build --no-restore
-#   only:
-#     - main
-#     - develop
-
-
-
-
-
 
 # =====================
 # Test Stage
 # =====================
+test-frontend:
+  stage: test
+  image: node:20
+  dependencies:
+    - build-frontend
+  script: 
+    - echo "Accessing the build artifact"
+    - echo "Testing Frontend...."
+    - npm run test --prefix frontend -- --coverage
+    - echo "Testing complete"
+  artifacts:
+    paths:
+      - frontend/coverage
+    expire_in: 1 hour
+
+
+
+
+
+
+
+
+
+
+
 # test-backend:
 #   stage: test
 #   image: mcr.microsoft.com/dotnet/sdk:9.0
