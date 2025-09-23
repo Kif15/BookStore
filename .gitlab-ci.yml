@@ -20,6 +20,7 @@ build-frontend:
     tags:
       - hva
     before_script:
+        - cd frontend
         - echo "Installing dependecies" 
         - npm ci
     script:
