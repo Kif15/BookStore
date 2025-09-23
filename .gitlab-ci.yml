@@ -53,6 +53,26 @@ build-backend:
 # =====================
 # Test Stage
 # =====================
+test-backend:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  dependencies:
+    - build-backend
+  script:
+    - cd backend
+    - echo "Installing backend dependencies..."
+    - dotnet restore
+    - echo "Testing Backend..."
+    - dotnet test --logger trx --collect:"XPlat Code Coverage"
+    - mkdir -p coverage
+    - cp -r TestResults/* coverage/
+  artifacts:
+    paths:
+      - backend/coverage
+    expire_in: 1 hour
+
+
+
 test-frontend:
   stage: test
   image: node:20
@@ -69,7 +89,6 @@ test-frontend:
     paths:
       - frontend/coverage
     expire_in: 1 hour
-
 
 
 
