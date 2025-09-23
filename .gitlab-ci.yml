@@ -59,6 +59,8 @@ test-frontend:
   dependencies:
     - build-frontend
   script: 
+    - echo "Installing dependecies"
+    - npm ci --prefix frontend
     - echo "Accessing the build artifact"
     - echo "Testing Frontend...."
     - npm run test --prefix frontend -- --coverage
