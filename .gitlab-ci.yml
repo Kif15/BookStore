@@ -6,6 +6,10 @@ stages:
   # - deploy-test
   # - deploy-prod
 
+default:
+  tags:
+    - hva
+
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
@@ -19,8 +23,6 @@ variables:
 build-frontend:
     stage: build
     image: node:20
-    tags:
-      - hva
     variables:
       CI: "false"
     before_script:
@@ -33,7 +35,24 @@ build-frontend:
         - echo "Frontend is built"
     artifacts: 
         paths:
-            - build/
+            - frontend/build/
+        expire_in: 1 hour
+
+build-backend:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  before_script: 
+    - cd backend
+    - echo "Installing dependecies..."
+    - dotnet restore
+  script:
+    - echo "Building the backend..."
+    - dotnet build --configuration Release --output ./publish
+    - echo "Backend is built"
+  artifacts:
+    paths:
+      - backend/publish
+    expire_in: 1 hour
 
 # build-backend:
 #   stage: build
