@@ -1,42 +1,23 @@
 services:
-  # Backend API
   bookstore-api:
     build: 
       context: ./backend
-      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
-      # Remove connection string - we'll use in-memory DB in code
     ports:
-      - "${API_PORT:-5000}:80"
-    networks:
-      - bookstore-network
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:80/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - "${API_PORT:-5236}:80"
 
-  # Frontend
   bookstore-frontend:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        - REACT_APP_API_URL=http://localhost:${API_PORT:-5000}
-        - REACT_APP_ENVIRONMENT=${ENVIRONMENT:-development}
+    environment:
+      - REACT_APP_API_URL=http://localhost:${API_PORT:-5236}
+      - REACT_APP_ENVIRONMENT=${ENVIRONMENT:-development}
     ports:
       - "${FRONTEND_PORT:-3000}:80"
     depends_on:
-      bookstore-api:
-        condition: service_started
-    networks:
-      - bookstore-network
+      - bookstore-api
 
-networks:
-  bookstore-network:
-    driver: bridge
 
 # Optional: SonarQube for when you need code analysis
 # Uncomment when you want to run code quality checks
