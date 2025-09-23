@@ -9,6 +9,8 @@ stages:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
+  CI: "false"
+
 
 # # =====================
 # # Build Stage
@@ -19,6 +21,8 @@ build-frontend:
     image: node:20
     tags:
       - hva
+    variables:
+      CI: "false"
     before_script:
         - cd frontend
         - echo "Installing dependecies" 
