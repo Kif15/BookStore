@@ -24,6 +24,8 @@ describe('BookStore App', () => {
     jest.clearAllMocks();
   });
 
+  
+
   test('renders bookstore header', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
@@ -33,7 +35,9 @@ describe('BookStore App', () => {
     } as Response);
 
     render(<App />);
-    const headerElement = screen.getByText(/📚 BookStore/i);
+    
+
+    const headerElement = await screen.findByText(/📚 BookStore/i);
     expect(headerElement).toBeInTheDocument();
   });
 
