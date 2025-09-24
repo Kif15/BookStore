@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 using BookStore; // Replace with your namespace
+using BookStore.Controllers; // Add this if BooksController is in the Controllers namespace
 
 namespace BookStore.Tests
 {
