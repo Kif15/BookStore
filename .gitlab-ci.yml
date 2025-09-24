@@ -13,6 +13,23 @@ default:
 # =====================
 # Build Stage
 # =====================
+build-backend:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:3.1
+  before_script: 
+    - cd backend
+    - echo "Installing dependecies..."
+    - dotnet restore
+  script:
+    - echo "Building the backend..."
+    - dotnet publish --configuration Release --output ./publish
+    - echo "Backend is built"
+  artifacts:
+    paths:
+      - backend/publish
+    expire_in: 1 hour
+
+
 build-frontend:
     stage: build
     image: node:20
@@ -31,21 +48,7 @@ build-frontend:
             - frontend/build/
         expire_in: 1 hour
 
-build-backend:
-  stage: build
-  image: mcr.microsoft.com/dotnet/sdk:9.0
-  before_script: 
-    - cd backend
-    - echo "Installing dependecies..."
-    - dotnet restore
-  script:
-    - echo "Building the backend..."
-    - dotnet publish --configuration Release --output ./publish
-    - echo "Backend is built"
-  artifacts:
-    paths:
-      - backend/publish
-    expire_in: 1 hour
+
 
 
 # =====================
@@ -53,7 +56,7 @@ build-backend:
 # =====================
 test-backend:
   stage: test
-  image: mcr.microsoft.com/dotnet/sdk:9.0
+  image: mcr.microsoft.com/dotnet/sdk:3.1
   dependencies:
     - build-backend
   script:
