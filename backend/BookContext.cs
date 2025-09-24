@@ -5,7 +5,7 @@ namespace BookStore
     public class BookContext : DbContext
     {
         public BookContext(DbContextOptions<BookContext> options) : base(options) { }
-        public DbSet<Book> Books { get; set; }
+        public DbSet<Book> Books { get; set; } = null!;
     }
 
     public class Book
