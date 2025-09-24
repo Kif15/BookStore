@@ -198,8 +198,10 @@ deploy-dev:
     - eval $(ssh-agent -s) 
     - ssh-add ~/.ssh/id_ed25519 
     - ssh -o StrictHostKeyChecking=no kifleyk@oege.ie.hva.nl "rm -rf ~/dev/frontend/* && rm -rf ~/dev/backend/* && mkdir -p ~/dev/frontend ~/dev/backend" - echo "Copying frontend files ..." 
+    - echo "Copying frontend files..."
     - scp -r frontend/build/* kifleyk@oege.ie.hva.nl:/home/ivi/kifleyk/dev/frontend 
-    - echo "Compying backend files..." - scp -r backend/publish/* kifleyk@oege.ie.hva.nl:/home/ivi/kifleyk/dev/backend 
+    - echo "Copying backend files..." 
+    - scp -r backend/publish/* kifleyk@oege.ie.hva.nl:/home/ivi/kifleyk/dev/backend 
     - echo "Files are copied. Run the files" 
     
 
