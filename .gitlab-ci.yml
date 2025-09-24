@@ -2,9 +2,7 @@ stages:
   - build
   - test
   # - code-analysis
-  # - deploy-dev
-  # - deploy-test
-  # - deploy-prod
+  - deploy
 
 default:
   tags:
@@ -42,7 +40,7 @@ build-backend:
     - dotnet restore
   script:
     - echo "Building the backend..."
-    - dotnet build --configuration Release --output ./publish
+    - dotnet publish --configuration Release --output ./publish
     - echo "Backend is built"
   artifacts:
     paths:
@@ -53,6 +51,26 @@ build-backend:
 # =====================
 # Test Stage
 # =====================
+test-backend:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  dependencies:
+    - build-backend
+  script:
+    - cd backend
+    - echo "Installing backend dependencies..."
+    - dotnet restore
+    - echo "Testing Backend..."
+    - dotnet test --logger trx --collect:"XPlat Code Coverage"
+    - mkdir -p coverage
+    - cp -r TestResults/* coverage/
+  artifacts:
+    paths:
+      - backend/coverage
+    expire_in: 1 hour
+
+
+
 test-frontend:
   stage: test
   image: node:20
@@ -69,7 +87,6 @@ test-frontend:
     paths:
       - frontend/coverage
     expire_in: 1 hour
-
 
 
 
@@ -165,6 +182,29 @@ test-frontend:
 # # =====================
 # # Deployment Stages
 # # =====================
+deploy-dev:
+  stage: deploy
+  image: debian:bullseye-slim
+  dependencies:
+    - build-backend 
+    - build-frontend 
+  before_script: 
+    - apt-get update && apt-get install -y openssh-client 
+  script: 
+    - echo "Deploying development..." 
+    - mkdir -p ~/.ssh 
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519 
+    - chmod 600 ~/.ssh/id_ed25519 
+    - eval $(ssh-agent -s) 
+    - ssh-add ~/.ssh/id_ed25519 
+    - ssh -o StrictHostKeyChecking=no kifleyk@oege.ie.hva.nl "rm -rf ~/dev/frontend/* && rm -rf ~/dev/backend/* && mkdir -p ~/dev/frontend ~/dev/backend" - echo "Copying frontend files ..." 
+    - echo "Copying frontend files..."
+    - scp -r frontend/build/* kifleyk@oege.ie.hva.nl:/home/ivi/kifleyk/dev/frontend 
+    - echo "Copying backend files..." 
+    - scp -r backend/publish/* kifleyk@oege.ie.hva.nl:/home/ivi/kifleyk/dev/backend 
+    - echo "Files are copied. Run the files" 
+    
+
 # deploy-development:
 #   stage: deploy-dev
 #   image: docker:20.10.16
