@@ -184,12 +184,12 @@ test-frontend:
 # # =====================
 deploy-dev:
   stage: deploy
-  image: alpine:latest
+  image: debian:bullseye-slim
   dependencies:
     - build-backend 
     - build-frontend 
   before_script: 
-    - apk add --no-cache openssh-client 
+    - apt-get update && apt-get install -y openssh-client 
   script: 
     - echo "Deploying development..." 
     - mkdir -p ~/.ssh 
