@@ -2,6 +2,9 @@ image: maven:3.9.5-eclipse-temurin-21
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+  GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+
 
 cache:
   paths:
@@ -12,6 +15,7 @@ stages:
   - build
   - test
   - package
+  - sonar-analysis
   - deploy
 
 default:
@@ -45,6 +49,25 @@ package:
     paths:
       - target/*.jar
     expire_in: 1 week
+
+sonar-analysis:
+  stage: sonar-analysis
+  
+  cache:
+    policy: pull-push
+    key: "sonar-cache-$CI_COMMIT_REF_SLUG"
+    paths:
+      - "${SONAR_USER_HOME}/cache"
+      - sonar-scanner/
+
+  script:
+    - mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_COMMIT_BRANCH == 'develop'
 
 deploy:dev:
   stage: deploy
