@@ -13,6 +13,10 @@ stages:
   - test
   - package
 
+default:
+  tags:
+    - hva
+
 build:
   stage: build
   script:
