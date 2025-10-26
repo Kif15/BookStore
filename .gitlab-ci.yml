@@ -71,43 +71,48 @@ sonar-analysis:
 
 deploy:dev:
   stage: deploy
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y sshpass
   script:
-    - echo "Deploying to DEV environment..."
-    - echo "JAR file:" target/*.jar
-    # Add your deployment commands here
-    # Example: scp target/*.jar user@dev-server:/path/to/deploy/
-    # Example: ssh user@dev-server "java -jar /path/to/deploy/webstore.jar"
+    - echo "Deploying to DEV environment on OEGE server..."
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && docker-compose up -d --build"
   environment:
     name: development
-    url: http://dev.yourapp.com
+    url: http://dev.oege.ie.hva.nl
   only:
     - develop
     - dev
 
 deploy:test:
   stage: deploy
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y sshpass
   script:
-    - echo "Deploying to TEST environment..."
-    - echo "JAR file:" target/*.jar
-    # Add your deployment commands here
-    # Example: scp target/*.jar user@test-server:/path/to/deploy/
+    - echo "Deploying to TEST environment on OEGE server..."
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && docker-compose up -d --build"
   environment:
     name: testing
-    url: http://test.yourapp.com
+    url: http://test.oege.ie.hva.nl
   only:
     - test
   when: manual
 
 deploy:prod:
   stage: deploy
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y sshpass
   script:
-    - echo "Deploying to PRODUCTION environment..."
-    - echo "JAR file:" target/*.jar
-    # Add your deployment commands here
-    # Example: scp target/*.jar user@prod-server:/path/to/deploy/
+    - echo "Deploying to PRODUCTION environment on OEGE server..."
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && docker-compose up -d --build"
   environment:
     name: production
-    url: http://yourapp.com
+    url: http://prod.oege.ie.hva.nl
   only:
     - main
     - master
