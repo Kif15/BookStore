@@ -1,44 +1,34 @@
-# =====================
-# React frontend
-# =====================
-# dependencies
-frontend/node_modules/
-frontend/.pnp
-frontend/.pnp.js
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# testing
-frontend/coverage/
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# production
-frontend/build/
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
 
-# environment variables
-frontend/.env
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# logs
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
-
-# =====================
-# .NET backend
-# =====================
-backend/bin/
-backend/obj/
-backend/*.user
-backend/*.suo
-backend/.vs/
-backend/*.nupkg
-
-# =====================
-# General
-# =====================
-.DS_Store
-Thumbs.db
-*.log
-.vs/
-.idea/
+### VS Code ###
+.vscode/
+Dotnet&React_Bookstore.zip
