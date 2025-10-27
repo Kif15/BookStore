@@ -77,6 +77,8 @@ deploy:dev:
   script:
     - echo "Deploying to DEV environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no Dockerfile $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no docker-compose.yml $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/
     - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && docker-compose up -d --build"
   environment:
     name: development
@@ -93,6 +95,8 @@ deploy:test:
   script:
     - echo "Deploying to TEST environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no Dockerfile $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no docker-compose.yml $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/
     - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && docker-compose up -d --build"
   environment:
     name: testing
@@ -109,6 +113,8 @@ deploy:prod:
   script:
     - echo "Deploying to PRODUCTION environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no Dockerfile $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no docker-compose.yml $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/
     - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && docker-compose up -d --build"
   environment:
     name: production
