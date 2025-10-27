@@ -71,15 +71,16 @@ sonar-analysis:
 
 deploy:dev:
   stage: deploy
+  dependencies:
+    - package
   before_script:
     - apt-get update -qq
     - apt-get install -y sshpass
   script:
     - echo "Deploying to DEV environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no Dockerfile $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no docker-compose.yml $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && docker-compose up -d --build"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && pkill -f 'java -jar' || true && nohup java -jar *.jar > app.log 2>&1 &"
+    - echo "Application deployed and running on port 8080"
   environment:
     name: development
     url: http://dev.oege.ie.hva.nl
@@ -87,39 +88,39 @@ deploy:dev:
     - develop
     - dev
 
-deploy:test:
+deploy:stage:
   stage: deploy
+  dependencies:
+    - package
   before_script:
     - apt-get update -qq
     - apt-get install -y sshpass
   script:
     - echo "Deploying to TEST environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no Dockerfile $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no docker-compose.yml $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && docker-compose up -d --build"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && pkill -f 'java -jar' || true && nohup java -jar *.jar > app.log 2>&1 &"
+    - echo "Application deployed and running on port 8080"
   environment:
     name: testing
-    url: http://test.oege.ie.hva.nl
+    url: http://stage.oege.ie.hva.nl
   only:
-    - test
-  when: manual
+    - stage
 
 deploy:prod:
   stage: deploy
+  dependencies:
+    - package
   before_script:
     - apt-get update -qq
     - apt-get install -y sshpass
   script:
     - echo "Deploying to PRODUCTION environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no Dockerfile $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no docker-compose.yml $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && docker-compose up -d --build"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && pkill -f 'java -jar' || true && nohup java -jar *.jar > app.log 2>&1 &"
+    - echo "Application deployed and running on port 8080"
   environment:
     name: production
     url: http://prod.oege.ie.hva.nl
   only:
     - main
     - master
-  when: manual
