@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: bookstore
+    env: docker
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production

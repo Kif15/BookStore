@@ -1,0 +1,25 @@
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Documentation
+*.md
+README.md
+
+# CI/CD
+.gitlab-ci.yml
+.github/
+
+# Other
+.DS_Store
+*.log
