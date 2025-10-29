@@ -79,8 +79,8 @@ deploy:dev:
   script:
     - echo "Deploying to DEV environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/webstore.jar
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && pkill -f 'webstore.jar' || true"
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && nohup java -jar webstore.jar --server.port=8081 > app.log 2>&1 &"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && if [ -f app.pid ]; then kill \$(cat app.pid) 2>/dev/null || true; rm -f app.pid; fi"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "bash -c 'cd $OEGE_DEPLOY_PATH_DEV && nohup java -jar webstore.jar --server.port=8081 > app.log 2>&1 & echo \$! > app.pid' &"
     - sleep 5
     - echo "Application deployed to http://oege.ie.hva.nl:8081"
   environment:
@@ -100,8 +100,8 @@ deploy:stage:
   script:
     - echo "Deploying to TEST environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/webstore.jar
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && pkill -f 'webstore.jar' || true"
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && nohup java -jar webstore.jar --server.port=8082 > app.log 2>&1 &"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && if [ -f app.pid ]; then kill \$(cat app.pid) 2>/dev/null || true; rm -f app.pid; fi"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "bash -c 'cd $OEGE_DEPLOY_PATH_TEST && nohup java -jar webstore.jar --server.port=8082 > app.log 2>&1 & echo \$! > app.pid' &"
     - sleep 5
     - echo "Application deployed to http://oege.ie.hva.nl:8082"
   environment:
@@ -120,13 +120,19 @@ deploy:prod:
   script:
     - echo "Deploying to PRODUCTION environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/webstore.jar
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && pkill -f 'webstore.jar' || true"
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && nohup java -jar webstore.jar --server.port=8083 > app.log 2>&1 &"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && if [ -f app.pid ]; then kill \$(cat app.pid) 2>/dev/null || true; rm -f app.pid; fi"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "bash -c 'cd $OEGE_DEPLOY_PATH_PROD && nohup java -jar webstore.jar --server.port=8002 > app.log 2>&1 & echo \$! > app.pid' &"
     - sleep 5
-    - echo "Application deployed to http://oege.ie.hva.nl:8083"
+    - echo "Application deployed to http://oege.ie.hva.nl:8002"
   environment:
     name: production
-    url: http://oege.ie.hva.nl:8083
+    url: http://oege.ie.hva.nl:8002
   only:
     - main
     - master
+
+
+
+
+
+
