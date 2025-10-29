@@ -78,12 +78,14 @@ deploy:dev:
     - apt-get install -y sshpass
   script:
     - echo "Deploying to DEV environment on OEGE server..."
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && pkill -f 'java -jar' || true && nohup java -jar *.jar > app.log 2>&1 &"
-    - echo "Application deployed and running on port 8080"
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_DEV/webstore.jar
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && pkill -f 'webstore.jar' || true"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_DEV && nohup java -jar webstore.jar --server.port=8081 > app.log 2>&1 &"
+    - sleep 5
+    - echo "Application deployed to http://oege.ie.hva.nl:8081"
   environment:
     name: development
-    url: http://dev.oege.ie.hva.nl
+    url: http://oege.ie.hva.nl:8081
   only:
     - develop
     - dev
@@ -97,12 +99,14 @@ deploy:stage:
     - apt-get install -y sshpass
   script:
     - echo "Deploying to TEST environment on OEGE server..."
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && pkill -f 'java -jar' || true && nohup java -jar *.jar > app.log 2>&1 &"
-    - echo "Application deployed and running on port 8080"
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_TEST/webstore.jar
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && pkill -f 'webstore.jar' || true"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_TEST && nohup java -jar webstore.jar --server.port=8082 > app.log 2>&1 &"
+    - sleep 5
+    - echo "Application deployed to http://oege.ie.hva.nl:8082"
   environment:
     name: testing
-    url: http://stage.oege.ie.hva.nl
+    url: http://oege.ie.hva.nl:8082
   only:
     - stage
 
@@ -115,12 +119,14 @@ deploy:prod:
     - apt-get install -y sshpass
   script:
     - echo "Deploying to PRODUCTION environment on OEGE server..."
-    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && pkill -f 'java -jar' || true && nohup java -jar *.jar > app.log 2>&1 &"
-    - echo "Application deployed and running on port 8080"
+    - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/webstore.jar
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && pkill -f 'webstore.jar' || true"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && nohup java -jar webstore.jar --server.port=8083 > app.log 2>&1 &"
+    - sleep 5
+    - echo "Application deployed to http://oege.ie.hva.nl:8083"
   environment:
     name: production
-    url: http://prod.oege.ie.hva.nl
+    url: http://oege.ie.hva.nl:8083
   only:
     - main
     - master
