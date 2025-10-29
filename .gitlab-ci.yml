@@ -121,12 +121,12 @@ deploy:prod:
     - echo "Deploying to PRODUCTION environment on OEGE server..."
     - sshpass -p "$OEGE_SSH_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar $OEGE_SSH_USER@$OEGE_SSH_HOST:$OEGE_DEPLOY_PATH_PROD/webstore.jar
     - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && pkill -f 'webstore.jar' || true"
-    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && nohup java -jar webstore.jar --server.port=8083 > app.log 2>&1 &"
+    - sshpass -p "$OEGE_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $OEGE_SSH_USER@$OEGE_SSH_HOST "cd $OEGE_DEPLOY_PATH_PROD && nohup java -jar webstore.jar --server.port=8002 > app.log 2>&1 &"
     - sleep 5
-    - echo "Application deployed to http://oege.ie.hva.nl:8083"
+    - echo "Application deployed to http://oege.ie.hva.nl:8002"
   environment:
     name: production
-    url: http://oege.ie.hva.nl:8083
+    url: http://oege.ie.hva.nl:8002
   only:
     - main
     - master
